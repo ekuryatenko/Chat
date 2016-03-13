@@ -9,12 +9,17 @@
 
 <div id="wrapper">
     <div id="menu">
-        <p class="welcome">Welcome, <b></b></p>
+        <p class="welcome">Welcome, <b id="userName"></b></p>
         <p class="logout"><a id="exit" href="#">Exit Chat</a></p>
         <div style="clear:both"></div>
     </div>
 
     <div id="chatbox"></div>
+
+    <div id="roomsbox">
+        <p><b>Rooms:</b></p>
+        <ul id="roomsList"></ul>
+    </div>
 
     <form name="message" action="" onsubmit="return false">
         <input name="usermsg" type="text" id="usermsg" size="63" />

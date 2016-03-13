@@ -21,7 +21,7 @@ a:hover { text-decoration:underline; }
     margin:0 auto;
     padding-bottom:25px;
     background:#EBF4FB;
-    width:504px;
+    width:614px;
     border:1px solid #ACD8F0; }
 
 #loginform { padding-top:18px; }
@@ -37,7 +37,20 @@ a:hover { text-decoration:underline; }
     height:270px;
     width:430px;
     border:1px solid #ACD8F0;
-    overflow:auto; }
+    overflow:auto;
+    display: inline-block;}
+
+#roomsbox {
+    text-align:left;
+    margin:0 auto;
+    margin-bottom:25px;
+    padding:10px;
+    background:#fff;
+    height:270px;
+    width:100px;
+    border:1px solid #ACD8F0;
+    overflow:auto;
+    display: inline-block;}
 
 #usermsg {
     width:395px;
@@ -53,4 +66,6 @@ a:hover { text-decoration:underline; }
 
 .logout { float:right; }
 
-.msgln { margin:0 0 2px 0; }
+
+
+
