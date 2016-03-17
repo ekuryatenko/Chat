@@ -3,8 +3,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 /*app.get('/', function(req, res){
-    res.sendfile('index.html');
-});*/
+ res.sendfile('index.html');
+ });*/
 
 // rooms which are currently available in chat
 var rooms = ['main'];
@@ -35,4 +35,3 @@ io.on('connection', function(socket){
 http.listen(3000, function(){
     console.log('listening on *:3000');
 });
-

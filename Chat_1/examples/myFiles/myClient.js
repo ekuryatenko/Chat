@@ -1,8 +1,16 @@
+"use strict";
+
+/* - комнаты
+* - скролинг сообщения
+* -
+*
+* */
+
+
 //-------window.onload--------
 var rooms = ['main','room2','room3'];
-rooms.push(userName);
-/*var roomsList = document.getElementById("roomsList");
-rewriteRooms(rooms, userName);*/
+
+
 
 
 
@@ -15,19 +23,29 @@ sendButton.addEventListener('click', function() {
 
 
 //----SOCKET EVENTS------------------
-socket = io.connect('http://localhost:3000');
+var socket = io.connect('http://localhost:3000');
 
 socket.on('connect', function () {
     var userName = prompt("What's your name?");
     writeNameToWrapDiv(userName);
     socket.emit('addUser', userName);
     console.log(userName);
+    rooms.push(userName);
 });
 
 socket.on('updateChat', function (userName, msg) {
     //console.log('GET UPDATECHAT: ' + msg);
     logToChatBox(userName, msg);
 });
+
+socket.on('connect_error', function () {
+    logToChatBox("BROWSER", "Connect_error");
+});
+
+socket.on('reconnect_failed', function () {
+    logToChatBox("BROWSER", "Reconnect_failed");
+});
+
 
 sendButton.onclick = function() {
     var form = document.forms[0];
@@ -36,7 +54,7 @@ sendButton.onclick = function() {
     textField.value = "";
 }
 
-
+console.log("Page loaded");
 
 
 //----FUNCTIONS-----------------
