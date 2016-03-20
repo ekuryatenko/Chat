@@ -1,28 +1,22 @@
 "use strict";
 
-/* - комнаты
-* - скролинг сообщения
-* -
-*
-* */
-
-
 //-------window.onload--------
-var rooms = ['main','room2','room3'];
-
-
+var roomsList = document.getElementById("roomsList");
+/*rewriteRooms(rooms, userName);*/
 
 
 
 //----EVENTS------------------
 var sendButton = document.querySelector('#submitmsg');
-sendButton.addEventListener('click', function() {
+/*sendButton.addEventListener('click', function() {
     replaceTextToChat(textField);
-});
+});*/
+
+var roomHref = document.querySelector('#createRoom');
 
 
 
-//----SOCKET EVENTS------------------
+//----SERVER EVENTS------------------
 var socket = io.connect('http://localhost:3000');
 
 socket.on('connect', function () {
@@ -30,23 +24,24 @@ socket.on('connect', function () {
     writeNameToWrapDiv(userName);
     socket.emit('addUser', userName);
     console.log(userName);
-    rooms.push(userName);
 });
 
 socket.on('updateChat', function (userName, msg) {
-    //console.log('GET UPDATECHAT: ' + msg);
     logToChatBox(userName, msg);
 });
 
+socket.on('updateRooms', function (roomsArr, userRoom) {
+    rewriteRooms(roomsArr, userRoom);
+});
+
+//
 socket.on('connect_error', function () {
-    logToChatBox("BROWSER", "Connect_error");
-});
-
-socket.on('reconnect_failed', function () {
-    logToChatBox("BROWSER", "Reconnect_failed");
+    logToChatBox('<b style="color:red">'+ 'BROWSER' + '</b>', "Connect error");
 });
 
 
+
+//----CLIENT EVENTS------------------
 sendButton.onclick = function() {
     var form = document.forms[0];
     var textField = form.elements.usermsg;
@@ -54,7 +49,13 @@ sendButton.onclick = function() {
     textField.value = "";
 }
 
-console.log("Page loaded");
+roomHref.addEventListener('click', function() {
+    socket.emit('createUserRoom', "");
+});
+
+
+
+
 
 
 //----FUNCTIONS-----------------
@@ -75,7 +76,7 @@ function writeNameToWrapDiv(name){
 function rewriteRooms(roomsArr, userRoom){
     cleanParent(roomsList);
 
-    for(index of roomsArr){
+    for(let index of roomsArr){
         if(index == userRoom){//userRoom is inactive
             let newLi = document.createElement('li');
             newLi.innerHTML = index;
