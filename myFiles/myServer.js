@@ -21,27 +21,37 @@ io.on('connection', function(socket){
         socket.emit('updateChat', 'SERVER', username + ', you have connected to this chat');
         // send rooms list to user
         socket.curRoom = rooms[0];
+        socket.join(socket.curRoom);
         socket.emit('updateRooms', rooms, socket.curRoom);
         // echo to curRoom 1 that a person has connected to their curRoom
-        socket.broadcast.emit('updateChat', 'SERVER', username + ' has connected to our chat');
+        socket.broadcast.to(socket.curRoom).emit('updateChat', 'SERVER', username + ' has connected to our ROOM');
     });
 
     socket.on('sendMessage', function(msg){
-        io.sockets.in(socket.room).emit('updateChat', socket.username, msg);
+        io.sockets.in(socket.curRoom).emit('updateChat', socket.username, msg);
     })
 
     socket.on('switchUserRoom', function(newUserRoom){
 
         if (isArrContain(rooms, newUserRoom)) {
-            //change rooms view for current user
+            socket.broadcast.to(socket.curRoom).emit('updateChat', 'SERVER', socket.username + ' has leave our ROOM');
+            socket.leave(socket.curRoom);
             socket.curRoom = newUserRoom;
+            socket.join(newUserRoom);
             socket.emit('updateRooms', rooms, newUserRoom);
+            socket.emit('updateChat', 'SERVER', socket.username + ' you has connected to ' + newUserRoom);
+            socket.broadcast.to(socket.curRoom).emit('updateChat', 'SERVER', socket.username + ' has connected to our ROOM');
         } else {
             //change rooms view for all users
             rooms.push(newUserRoom);
+            socket.broadcast.to(socket.curRoom).emit('updateChat', 'SERVER', socket.username + ' has leave our ROOM');
+            socket.leave(socket.curRoom);
             socket.curRoom = newUserRoom;
+            socket.join(newUserRoom);
             socket.emit('updateRooms', rooms, newUserRoom);
+            socket.emit('updateChat', 'SERVER', socket.username + ' you has connected to ' + newUserRoom);
             socket.broadcast.emit('updateRooms', rooms, "updateRoomsBroadcast");
+            socket.broadcast.to(newUserRoom).emit('updateChat', 'SERVER', socket.username + ' has connected to our ROOM');
         }
     });
 

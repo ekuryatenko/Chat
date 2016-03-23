@@ -19,6 +19,7 @@ var roomHref = document.querySelector('#createRoom');
 //----SERVER EVENTS------------------
 var socket = io.connect('http://localhost:3000');
 
+
 socket.on('connect', function () {
     userName = prompt("What's your name?");
     writeNameToWrapDiv(userName);
@@ -26,9 +27,11 @@ socket.on('connect', function () {
     console.log(userName);
 });
 
+
 socket.on('updateChat', function (userName, msg) {
     logToChatBox(userName, msg);
 });
+
 
 socket.on('updateRooms', function (roomsArr, userRoom) {
     if(userRoom == "updateRoomsBroadcast"){
@@ -37,10 +40,9 @@ socket.on('updateRooms', function (roomsArr, userRoom) {
         socket.curRoom = userRoom;
         rewriteRooms(roomsArr, socket.curRoom);
     }
-
 });
 
-//
+
 socket.on('connect_error', function () {
     logToChatBox('<b style="color:red">'+ 'BROWSER' + '</b>', "Connect error");
 });
@@ -91,7 +93,9 @@ function rewriteRooms(roomsArr, userRoom){
             let href = document.createElement('a');
             href.href = "#";
             href.innerHTML = index;
-            href.addEventListener('click', function(){alert(href.innerHTML);});
+            href.addEventListener('click', function(){
+                socket.emit('switchUserRoom', index);
+            });
 
             let newLi = document.createElement('li');
             newLi.appendChild(href);
