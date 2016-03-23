@@ -22,7 +22,7 @@ var socket = io.connect('http://localhost:3000');
 
 socket.on('connect', function () {
     userName = prompt("What's your name?");
-    writeNameToWrapDiv(userName);
+
     socket.emit('addUser', userName);
     console.log(userName);
 });
@@ -33,12 +33,15 @@ socket.on('updateChat', function (userName, msg) {
 });
 
 
-socket.on('updateRooms', function (roomsArr, userRoom) {
-    if(userRoom == "updateRoomsBroadcast"){
+socket.on('updateRooms', function (roomsArr, newRoomForUser) {
+    //some other user creates new room - adds it to list
+    if(newRoomForUser == "updateRoomsList"){
         rewriteRooms(roomsArr, socket.curRoom);
     }else {
-        socket.curRoom = userRoom;
-        rewriteRooms(roomsArr, socket.curRoom);
+        //this user has changed the room - matches it in list
+        socket.curRoom = newRoomForUser;
+        rewriteRooms(roomsArr, newRoomForUser);
+        writeNameToWrapDiv(userName, newRoomForUser);
     }
 });
 
@@ -77,8 +80,8 @@ function replaceTextToChat(textField){
     logToChatBox(msg);
 }
 
-function writeNameToWrapDiv(name){
-    document.querySelector('#userName').innerHTML = name;
+function writeNameToWrapDiv(name, newRoomForUser){
+    document.querySelector('#userName').innerHTML = name + ". You are in " + newRoomForUser + " room.";
 }
 
 function rewriteRooms(roomsArr, userRoom){
