@@ -3,12 +3,11 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 /*app.get('/', function(req, res){
-    res.sendfile('index.html');
-});*/
+ res.sendfile('index.html');
+ });*/
 
 // rooms which are currently available in chat
-var mainRoom =  'main'
-var rooms = {};
+var rooms = ['MAIN'];
 
 io.on('connection', function(socket){
     console.log('a user connected');
@@ -22,11 +21,11 @@ io.on('connection', function(socket){
         // echo to client they've connected
         socket.emit('updateChat', 'SERVER', username + ', you have connected to this chat');
         // send rooms list to user
-        socket.curRoom = mainRoom;
-        socket.join(mainRoom);
-        socket.emit('updateRooms', rooms, mainRoom);
+        socket.curRoom = rooms[0];
+        socket.join(rooms[0]);
+        socket.emit('updateRooms', rooms, rooms[0]);
         // echo to curRoom 1 that a person has connected to their curRoom
-        socket.broadcast.to(mainRoom).emit('updateChat', 'SERVER', username + ' has connected to our ROOM');
+        socket.broadcast.to(rooms[0]).emit('updateChat', 'SERVER', username + ' has connected to our CHAT');
     });
 
 
@@ -36,12 +35,12 @@ io.on('connection', function(socket){
 
 
     socket.on('switchUserRoom', function(newUserRoom){
-        if (isObjContain(rooms, newUserRoom)) {
+        if (isArrContain(rooms, newUserRoom)) {
             //this user goes to existed room
             switchRoom(socket, newUserRoom);
         } else {
-            //this user creates new room - changes rooms lists
-            rooms.newUserRoom = parseInt(1);
+            //this user creates new room - changes rooms lists for all users
+            rooms.push(newUserRoom);
             socket.broadcast.emit('updateRooms', rooms, "updateRoomsList");
             switchRoom(socket, newUserRoom);
         }
@@ -58,14 +57,13 @@ function rewriteRoomsToAllSockets(){
 }
 
 function switchRoom(socket, newUserRoom){
+    //leave current room
     socket.broadcast.to(socket.curRoom).emit('updateChat', 'SERVER', socket.username + ' has leave our ROOM');
     socket.leave(socket.curRoom);
-    rooms[socket.curRoom]--;
-    if(rooms[socket.curRoom] == 0){
-        delete rooms[socket.curRoom];
-    }
-    console.log(rooms);
+
     socket.curRoom = newUserRoom;
+
+    //join to new room
     socket.join(newUserRoom);
     socket.emit('updateRooms', rooms, newUserRoom);
     socket.emit('updateChat', 'SERVER', socket.username + ' you has connected to ' + newUserRoom);
@@ -77,8 +75,17 @@ http.listen(3000, function(){
     console.log('listening on *:3000');
 });
 
-function isObjContain(rooms, item){
-        if(rooms[item] !== undefined)return 1;
-        else return 0;
-}
 
+
+/*
+function isObjContain(rooms, item){
+    if(rooms[item] !== undefined)return 1;
+    else return 0;
+}*/
+
+function isArrContain(arr, item){
+    for(var elem of arr){
+        if(elem === item)return 1;
+    }
+    return 0;
+}

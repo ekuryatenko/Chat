@@ -9,10 +9,10 @@ var roomsList = document.getElementById("roomsList");
 //----EVENTS------------------
 var sendButton = document.querySelector('#submitmsg');
 /*sendButton.addEventListener('click', function() {
-    replaceTextToChat(textField);
-});*/
+ replaceTextToChat(textField);
+ });*/
 
-var roomHref = document.querySelector('#createRoom');
+var createRoomHref = document.querySelector('#createRoom');
 
 
 
@@ -34,14 +34,14 @@ socket.on('updateChat', function (userName, msg) {
 
 
 socket.on('updateRooms', function (roomsArr, newRoomForUser) {
-    //some other user creates new room - adds it to list
+    //some other user creates new room, this room should be added to list
     if(newRoomForUser == "updateRoomsList"){
         rewriteRooms(roomsArr, socket.curRoom);
     }else {
-        //this user has changed the room - matches it in list
+        //this user has created his room, this room should be added to list
         socket.curRoom = newRoomForUser;
         rewriteRooms(roomsArr, newRoomForUser);
-        writeNameToWrapDiv(userName, newRoomForUser);
+        rewriteWrapDiv(userName, newRoomForUser);
     }
 });
 
@@ -60,13 +60,9 @@ sendButton.onclick = function() {
     textField.value = "";
 }
 
-roomHref.addEventListener('click', function() {
+createRoomHref.addEventListener('click', function() {
     socket.emit('switchUserRoom', userName);
 });
-
-
-
-
 
 
 //----FUNCTIONS-----------------
@@ -80,7 +76,7 @@ function replaceTextToChat(textField){
     logToChatBox(msg);
 }
 
-function writeNameToWrapDiv(name, newRoomForUser){
+function rewriteWrapDiv(name, newRoomForUser){
     document.querySelector('#userName').innerHTML = name + ". You are in " + newRoomForUser + " room.";
 }
 
@@ -88,11 +84,13 @@ function rewriteRooms(roomsArr, userRoom){
     cleanParent(roomsList);
 
     for(let index of roomsArr){
-        if(index == userRoom){//userRoom is inactive
+        if(index == userRoom){
+            //userRoom item is inactive in rooms list
             let newLi = document.createElement('li');
             newLi.innerHTML = index;
             roomsList.appendChild(newLi);
         }else{
+            //other rooms are active hrefs, which will send user to this name room
             let href = document.createElement('a');
             href.href = "#";
             href.innerHTML = index;
@@ -102,18 +100,17 @@ function rewriteRooms(roomsArr, userRoom){
 
             let newLi = document.createElement('li');
             newLi.appendChild(href);
-
             roomsList.appendChild(newLi);
         }
     }
 }
 
-function cleanParent(parent){
-    if(parent.children.length !== 0) {
-        for (var i = (parent.children.length - 1); i >= 0; i--) {
-            let child = parent.children[i];
+function cleanParent(listArr){
+    if(listArr.children.length !== 0) {
+        for (var i = (listArr.children.length - 1); i >= 0; i--) {
+            let child = listArr.children[i];
             console.log(child);
-            parent.removeChild(child);
+            listArr.removeChild(child);
         }
     }else{
         console.log("Error: EmptyParent")
@@ -121,3 +118,32 @@ function cleanParent(parent){
 }
 
 function show(word){alert(word)}
+
+
+
+//If rooms list will be an object
+/*
+function rewriteRooms(roomsObj, userRoom){
+    cleanParent(roomsList);
+
+    for(let index in roomsObj){
+        if(index == userRoom){
+            //userRoom item is inactive in rooms list
+            let newLi = document.createElement('li');
+            newLi.innerHTML = index;
+            roomsList.appendChild(newLi);
+        }else{
+            //other rooms are active hrefs
+            let href = document.createElement('a');
+            href.href = "#";
+            href.innerHTML = index;
+            href.addEventListener('click', function(){
+                socket.emit('switchUserRoom', index);//will send user to index name room
+            });
+
+            let newLi = document.createElement('li');
+            newLi.appendChild(href);
+            roomsList.appendChild(newLi);
+        }
+    }
+}*/
