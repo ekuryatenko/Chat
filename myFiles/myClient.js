@@ -1,8 +1,10 @@
 "use strict";
+const BROWSER_WORD = '<b style="color:red">'+ 'BROWSER' + '</b>';
+
 var userName = "";
 //-------window.onload--------
 var roomsList = document.getElementById("roomsList");
-/*rewriteRooms(rooms, userName);*/
+var connectionErrFlag = false;
 
 
 
@@ -21,9 +23,11 @@ var socket = io.connect('http://localhost:3000');
 
 
 socket.on('connect', function () {
+    connectionErrFlag = false;
+
     userName = prompt("What's your name?");
 
-    socket.emit('addUser', userName);
+    socket.emit('addNewUserToChat', userName);
     console.log(userName);
 });
 
@@ -47,7 +51,8 @@ socket.on('updateRooms', function (roomsArr, newRoomForUser) {
 
 
 socket.on('connect_error', function () {
-    logToChatBox('<b style="color:red">'+ 'BROWSER' + '</b>', "Connect error");
+    if(!connectionErrFlag){logToChatBox(BROWSER_WORD, "Connect error");}
+    connectionErrFlag = true;
 });
 
 
@@ -121,29 +126,3 @@ function show(word){alert(word)}
 
 
 
-//If rooms list will be an object
-/*
-function rewriteRooms(roomsObj, userRoom){
-    cleanParent(roomsList);
-
-    for(let index in roomsObj){
-        if(index == userRoom){
-            //userRoom item is inactive in rooms list
-            let newLi = document.createElement('li');
-            newLi.innerHTML = index;
-            roomsList.appendChild(newLi);
-        }else{
-            //other rooms are active hrefs
-            let href = document.createElement('a');
-            href.href = "#";
-            href.innerHTML = index;
-            href.addEventListener('click', function(){
-                socket.emit('switchUserRoom', index);//will send user to index name room
-            });
-
-            let newLi = document.createElement('li');
-            newLi.appendChild(href);
-            roomsList.appendChild(newLi);
-        }
-    }
-}*/
