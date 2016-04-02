@@ -2,6 +2,7 @@
 const BROWSER_WORD = '<b style="color:red">'+ 'BROWSER' + '</b>';
 
 var userName = "";
+
 //-------window.onload--------
 var roomsList = document.getElementById("roomsList");
 var connectionErrFlag = false;
@@ -19,7 +20,7 @@ var createRoomHref = document.querySelector('#createRoom');
 
 
 //----SERVER EVENTS------------------
-var socket = io.connect('http://localhost:3000');
+var socket = io.connect(window.location.hostname);
 
 
 socket.on('connect', function () {
@@ -66,7 +67,7 @@ sendButton.onclick = function() {
 }
 
 createRoomHref.addEventListener('click', function() {
-    socket.emit('switchUserRoom', userName);
+    socket.emit('switchUserRoom', prompt("Enter your room name: "));
 });
 
 
@@ -114,7 +115,6 @@ function cleanParent(listArr){
     if(listArr.children.length !== 0) {
         for (var i = (listArr.children.length - 1); i >= 0; i--) {
             let child = listArr.children[i];
-            console.log(child);
             listArr.removeChild(child);
         }
     }else{
