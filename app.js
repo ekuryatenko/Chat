@@ -1,46 +1,55 @@
-var express = require('express');
-var app = express();
-// Create a Node.js based http server with express warp
-var server = require('http').Server(app);
+'use strict';
+const Path = require('path');
+const Hapi = require('hapi');
+const Inert = require('inert');
+const Vision = require('vision');
+const Jade = require('Jade');
 
-// Create a Socket.IO server and attach it to the express server
-var io = require('socket.io')(server);
+const server = new Hapi.Server();
+server.connection({ port: 3000 });
 
-
-var myServer = require('./myServer');
-var jade = require("jade");
-var path = require('path');
-
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-//dir for all static files - .css, .js, .html, image
-app.use(express.static(__dirname + '/public'));
-
-//compiles jade template for client html and sends it to browser
-app.get('/', function(req, res){
-    res.render("web");
+//Static files support
+server.register(Inert, (err) => {
+    if (err) {
+        throw err;
+    }
 });
 
-//user connection event
-io.on('connection', function(socket){
-    myServer.initServer(io, socket);
-});
+//Templates support
+server.register(Vision, (err) => {
+    if (err) {
+        throw err;
+    }
 
-
-
-//run express server
-var port = Number(process.env.PORT || 3000);
-server.listen(port, function(){
-    console.log('listening');
+    //Jade enables
+    server.views({
+        engines: { jade: Jade },
+        path: __dirname + '/views',
+        compileOptions: {
+            pretty: true
+        }
+    });
 });
 
 
+server.route([
+    { method: 'GET', path: '/', handler:  function (request, reply) {reply.view('web'); }},//jade template
+    { method: 'GET', path: '/html', handler: {file: './views/webPage.html'}},//html
+    { method: 'GET', path: '/myClient.js', handler: { file: './myClient.js' } },
+    { method: 'GET', path: '/myStyle.css', handler: { file: './views/myStyle.css' } }
+    ]
+);
 
 
+server.start((err) => {
+    if (err) {
+        throw err;
+    }
+
+    require('./myServer').initServer(server.listener,function() {
+        console.log('Server running at:', server.info.uri);//callback after servers running
+    });
+});
 
 
-
-module.exports = app;
+module.exports = server;
