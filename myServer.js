@@ -17,9 +17,18 @@ var io;
 var roomsList = ['MAIN'];
 var roomsClients = {'MAIN':0};
 
+// db deploy
+//const hostURI = 'mongodb://user:pass@host:port/db';
+//const hostURI2 = process.env.DATABASE_URL;
+const hostURI = "mongodb://heroku_x87klbmn:lt49ivc2vktgbg1dlrtv3ncrhc@ds011271.mlab.com:11271/heroku_x87klbmn";
+
+const localURI = 'mongodb:/localhost:27017/chat';
+exports.dbURI = hostURI;
+
 exports.initServer = function(listener, callback){
-    mongoClient.connect('mongodb://localhost:27017/chat', function (err, db) {
-        console.log("connected to dataBase: " + db.databaseName);
+    mongoClient.connect(hostURI , function (err, db) {
+        //console.log("connected to dataBase: " + db.databaseName);
+        console.log(" SERVER: connected to dataBase");
 
         io = SocketIO.listen(listener);//????????????
 

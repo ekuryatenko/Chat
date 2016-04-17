@@ -3,10 +3,10 @@ const Path = require('path');
 const Hapi = require('hapi');
 const Inert = require('inert');
 const Vision = require('vision');
-const Jade = require('Jade');
+//const Jade = require('Jade');
 
 const server = new Hapi.Server();
-server.connection({ port: 3000 });
+server.connection({ port: process.env.PORT });
 
 //Static files support
 server.register(Inert, (err) => {
@@ -16,7 +16,7 @@ server.register(Inert, (err) => {
 });
 
 //Templates support
-server.register(Vision, (err) => {
+/*server.register(Vision, (err) => {
     if (err) {
         throw err;
     }
@@ -29,12 +29,11 @@ server.register(Vision, (err) => {
             pretty: true
         }
     });
-});
+});*/
 
 
 server.route([
-    { method: 'GET', path: '/', handler:  function (request, reply) {reply.view('web'); }},//jade template
-    { method: 'GET', path: '/html', handler: {file: './views/webPage.html'}},//html
+    { method: 'GET', path: '/', handler: {file: './views/webPage.html'}},//html
     { method: 'GET', path: '/myClient.js', handler: { file: './myClient.js' } },
     { method: 'GET', path: '/myStyle.css', handler: { file: './views/myStyle.css' } },
     { method: 'GET', path: '/messages/roomId={roomName}', handler:  function (request, reply) {require('./myRoute').answer(reply ,request.params.roomName); } }

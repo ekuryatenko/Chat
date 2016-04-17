@@ -2,10 +2,11 @@
 
 // Establish a connection to the mongo database
 var mongoClient = require('mongodb').MongoClient;
+var uri = require('./myServer').dbURI;
 
 exports.answer = function(reply, roomToFind){
-    mongoClient.connect('mongodb://localhost:27017/chat', function (err, db) {
-        console.log("FROM ROUTE connected to dataBase: " + db.databaseName);
+    mongoClient.connect(uri, function (err, db) {
+        console.log("MyROUTE: connected to dataBase");
 
         var collection = db.collection('messages');
 
