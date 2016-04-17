@@ -36,7 +36,8 @@ server.route([
     { method: 'GET', path: '/', handler:  function (request, reply) {reply.view('web'); }},//jade template
     { method: 'GET', path: '/html', handler: {file: './views/webPage.html'}},//html
     { method: 'GET', path: '/myClient.js', handler: { file: './myClient.js' } },
-    { method: 'GET', path: '/myStyle.css', handler: { file: './views/myStyle.css' } }
+    { method: 'GET', path: '/myStyle.css', handler: { file: './views/myStyle.css' } },
+    { method: 'GET', path: '/messages/roomId={roomName}', handler:  function (request, reply) {require('./myRoute').answer(reply ,request.params.roomName); } }
     ]
 );
 
@@ -53,3 +54,5 @@ server.start((err) => {
 
 
 module.exports = server;
+
+

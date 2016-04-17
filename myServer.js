@@ -163,7 +163,7 @@ function createNewRoom(room){
 function sendOldMsgsFromRoom(socket, db){
     // send old messages to user
     var collection = db.collection('messages');
-    collection.find({room:socket.curRoom}).limit(10).sort({"time": -1}).toArray(function (err, arr) {
+    collection.find({room:socket.curRoom}).limit(50).sort({"time": -1}).toArray(function (err, arr) {
         if (err) throw err;
 
         socket.emit('msgArr', arr);//sends messages array to client
@@ -175,3 +175,4 @@ function sendOldMsgsFromRoom(socket, db){
         socket.emit('updateChat', msg1);
     });
 }
+
