@@ -6,31 +6,32 @@
 </head>
 
 <body>
+    <div id="wrapper">
 
-<div id="wrapper">
-    <div id="menu">
-        <p class="welcome">Welcome, <b id="userName"></b></p>
+        <div id="menu">
+            <p id="welcome"><b>Welcome, </b><b id="userName"></b></p>
+            <a id="createRoom" href="#"><b>Create room</b></a>
+        </div>
 
-        <p class="logout"><a id="createRoom" href="#">Create room</a></p>
-        <div style="clear:both"></div>
+        <div id="chatBox"></div>
+
+        <div id="roomsBox">
+            <p><b>Rooms:</b></p>
+            <ul id="roomsList"></ul>
+        </div>
+
+        <div id="formBox">
+            <form name="message" action="" onsubmit="return false">
+                <input name="userMsg" type="text" id="userMsg" size="80" autocomplete="off" />
+                <button id="sendMsg">Send</button>
+            </form>
+        </div>
+
+
     </div>
 
-    <div id="chatbox"></div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="myClient.js"></script>
 
-    <div id="roomsbox">
-        <p><b>Rooms:</b></p>
-        <ul id="roomsList"></ul>
-    </div>
-
-    <form name="message" action="" onsubmit="return false">
-        <input name="usermsg" type="text" id="usermsg" size="63" />
-        <button id="submitmsg"/>Send</button>
-    </form>
-</div>
-
-<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-<script src="myClient.js"></script>
-
-
-</body>
+    </body>
 </html>

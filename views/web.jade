@@ -1,37 +1,32 @@
 doctype html
 html
-  head
-    title="MyPage"
-    link(type="text/css", rel='stylesheet', href='myStyle.css', )
+    head
+        title="MyPage"
+        link(type="text/css", rel='stylesheet', href='myStyle.css')
+
+    body
+        div#wrapper
+
+            div#menu
+
+                p#welcome
+                    b Welcome,
+                    b#userName
+
+                a#createRoom(href="#")
+                    b Create room
+
+            div#chatBox
+
+            div#roomsBox
+                p
+                    b Rooms:
+                ul#roomsList
+
+            form(name="message", action="", onsubmit="return false")
+                input(name="userMsg", type="text", id="userMsg", size="120", autocomplete="off")
+                button#sendMsg Send
 
 
-  body
-    div#wrapper
-      div#menu
-        p.welcome Welcome,
-          b#userName
-
-        p.logout
-          a#createRoom(href="#") Create room
-        div(style="clear:both")
-
-      div#chatbox
-
-      div#roomsbox
-        p
-          b Rooms:
-        ul#roomsList
-
-
-      form(name="message", action="", onsubmit="return false")
-        input(name="usermsg", type="text", id="usermsg", size="80")
-        button#submitmsg Send
-
-    script(src="https://cdn.socket.io/socket.io-1.2.0.js")
-    script(src='myClient.js')
-
-
-
-<!-- If Socket.IO is used with Express, then the /socket.io/ path will
-<!--serve the proper Socket.IO javascript files used by the browser -->
-<script src="/socket.io/socket.io.js"></script>
+        script(src="https://cdn.socket.io/socket.io-1.2.0.js")
+        script(src='myClient.js')

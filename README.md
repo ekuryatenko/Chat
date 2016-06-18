@@ -1,1 +1,1 @@
-# Chat
+# My traning project - simple chat on Hapi and Mongo DB

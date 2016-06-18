@@ -1,73 +1,108 @@
 /* CSS Document */
 body {
-    font:12px arial;
+    font:14px arial;
     color: #222;
     text-align:center;
-    padding:35px; }
+    padding:70px;
+}
 
-form, p, span {
+ul {
     margin:0;
-    padding:0; }
+    padding-left:5px;
+}
 
-input { font:12px arial; }
+p, li {
+    margin:0;
+    padding:0;
+}
 
 a {
+    margin:0;
+    padding:0;
     color:#0000FF;
-    text-decoration:none; }
+    text-decoration:none;
+}
 
-a:hover { text-decoration:underline; }
+/* Will underline href on cursor */
+a:hover {
+    text-decoration:underline;
+}
 
-#wrapper, #loginform {
+#wrapper {
     margin:0 auto;
-    padding-bottom:25px;
+    margin-bottom:5px;
+    padding-bottom:10px;
     background:#EBF4FB;
     width:614px;
-    border:1px solid #ACD8F0; }
+    border:1px solid #ACD8F0;
+    position: relative;
+}
 
-#loginform { padding-top:18px; }
+#menu {
+    position: relative;
+    display: block;
+    padding:2px 15px 2px 15px;
 
-#loginform p { margin: 5px; }
+    /* Was working only with float of childs */
+    overflow:hidden;
+    margin-bottom:5px;
+}
 
-#chatbox {
+#welcome {
+    text-align:left;
+    float: left;
+    width:430px;
+}
+
+#createRoom {
+    float: right;
+}
+
+#chatBox {
     text-align:left;
     margin:0 auto;
-    margin-bottom:25px;
+    margin-bottom:5px;
     padding:10px;
     background:#fff;
     height:270px;
     width:430px;
     border:1px solid #ACD8F0;
     overflow:auto;
-    display: inline-block;}
+    display: inline-block;
+}
 
-#roomsbox {
+#roomsBox {
     text-align:left;
     margin:0 auto;
-    margin-bottom:25px;
+    margin-bottom:5px;
     padding:10px;
     background:#fff;
     height:270px;
     width:100px;
     border:1px solid #ACD8F0;
     overflow:auto;
-    display: inline-block;}
+    display: inline-block;
+}
 
-#usermsg {
-    width:430px;
+/* Div to set form position */
+#formBox {
+    margin:0 auto;
+    display: block;
+    position: relative;
+    text-align:center;
+}
+
+/* Form input field */
+#userMsg {
+    width:450px;
     border:1px solid #ACD8F0;
+    margin:0 auto;
+    display: inline-block;
+    font:14px arial;
+}
 
-    margin:0 auto;}
-
-#submit { width: 60px; }
-
-#menu { padding:12.5px 25px 12.5px 25px; }
-
-.error { color: #ff0000; }
-
-.welcome { float:left; }
-
-.logout { float:right; }
-
-
-
-
+/* Form send button */
+#sendMsg {
+    width: 120px;
+    display: inline-block;
+}
