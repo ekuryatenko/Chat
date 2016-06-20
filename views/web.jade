@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title="MyPage"
+        title="MyChatJadePage"
         link(type="text/css", rel='stylesheet', href='myStyle.css')
 
     body
@@ -23,8 +23,9 @@ html
                     b Rooms:
                 ul#roomsList
 
-            form(name="message", action="", onsubmit="return false")
-                input(name="userMsg", type="text", id="userMsg", size="120", autocomplete="off")
+            div#formBox
+                form(name="message", action="", onsubmit="return false")
+                    input(name="userMsg", type="text", id="userMsg", autocomplete="off")
                 button#sendMsg Send
 
 

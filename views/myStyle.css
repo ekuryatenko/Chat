@@ -1,108 +1,108 @@
 /* CSS Document */
 body {
-    font:14px arial;
+    padding: 70px;
+    font: 14px arial;
     color: #222;
-    text-align:center;
-    padding:70px;
 }
 
 ul {
-    margin:0;
-    padding-left:5px;
+    padding-left: 5px;
+    margin: 2px;
 }
 
-p, li {
-    margin:0;
-    padding:0;
+p,
+li {
+    margin: 0;
+    padding: 0;
 }
 
 a {
-    margin:0;
-    padding:0;
-    color:#0000FF;
-    text-decoration:none;
+    margin: 0;
+    padding: 0;
+    color: #0000FF;
+    text-decoration: none;
 }
 
-/* Will underline href on cursor */
 a:hover {
-    text-decoration:underline;
+    text-decoration: underline; /* Will underline href on cursor */
 }
 
 #wrapper {
-    margin:0 auto;
-    margin-bottom:5px;
-    padding-bottom:10px;
-    background:#EBF4FB;
-    width:614px;
-    border:1px solid #ACD8F0;
-    position: relative;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 814px;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border: 1px solid #ACD8F0;
+    background: #EBF4FB;
 }
 
 #menu {
-    position: relative;
-    display: block;
-    padding:2px 15px 2px 15px;
-
-    /* Was working only with float of childs */
-    overflow:hidden;
-    margin-bottom:5px;
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1; /* Enables justify content: space-between */
+    margin-bottom: 1px;
+    padding: 5px 10px 5px 10px;
 }
 
 #welcome {
-    text-align:left;
-    float: left;
-    width:430px;
+    width: 630px;
+    padding: 0px 10px 0px 10px;
+    text-align: left;
 }
 
 #createRoom {
-    float: right;
+    width: 120px;
+    text-align: center;
 }
 
 #chatBox {
-    text-align:left;
-    margin:0 auto;
-    margin-bottom:5px;
-    padding:10px;
-    background:#fff;
-    height:270px;
-    width:430px;
-    border:1px solid #ACD8F0;
-    overflow:auto;
     display: inline-block;
+    height: 320px;
+    width: 630px;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #ACD8F0;
+    background: #fff;
+    overflow: auto;
+    text-align: left;
 }
 
 #roomsBox {
-    text-align:left;
-    margin:0 auto;
-    margin-bottom:5px;
-    padding:10px;
-    background:#fff;
-    height:270px;
-    width:100px;
-    border:1px solid #ACD8F0;
-    overflow:auto;
     display: inline-block;
+    height: 320px;
+    width: 100px;
+    margin: 0 auto;
+    margin-bottom: 5px;
+    padding: 10px;
+    border: 1px solid #ACD8F0;
+    background: #fff;
+    overflow: auto;
+    text-align: left;
 }
 
-/* Div to set form position */
-#formBox {
-    margin:0 auto;
-    display: block;
-    position: relative;
-    text-align:center;
+#formBox {/* Div to set form position */
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;/* Enables justify content = space-between  */
+    padding: 5px 10px 5px 10px;
 }
 
-/* Form input field */
+form {
+    display: flex;
+    width: 650px;
+}
+
 #userMsg {
-    width:450px;
-    border:1px solid #ACD8F0;
-    margin:0 auto;
-    display: inline-block;
-    font:14px arial;
+    flex-grow: 1;/* Enables input window stretching  */
+    margin: 0 auto;
+    border: 1px solid #ACD8F0;
+    font: 14px arial;
 }
 
-/* Form send button */
 #sendMsg {
     width: 120px;
-    display: inline-block;
 }
