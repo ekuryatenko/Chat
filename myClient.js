@@ -4,17 +4,17 @@
  * ACTIVE USER PAGE FIELDS
  *********************************/
 // List of chat rooms on the page
-var ROOMS_LIST = document.getElementById ("roomsList");
+const ROOMS_LIST = document.getElementById ("roomsList");
 // Field for of chat messages on the page
-var CHAT_BOX = document.getElementById ("chatBox");
+const CHAT_BOX = document.getElementById ("chatBox");
 // Form input field
-var TEXT_INPUT = document.getElementById ("userMsg");
+const TEXT_INPUT = document.getElementById ("userMsg");
 // Button to send user messages
-var SEND_BUTTON = document.getElementById ("sendMsg");
+const SEND_BUTTON = document.getElementById ("sendMsg");
 // Reference to create new user room
-var CREATE_NEW_ROOM_HREF = document.getElementById ("createRoom");
+const CREATE_NEW_ROOM_HREF = document.getElementById ("createRoom");
 // In this field user could see his name and his current active room */
-var WRAP_USER_NAME = document.getElementById ("userName");
+const WRAP_USER_NAME = document.getElementById ("userName");
 
 /**********************************
  * VARIABLES
@@ -23,23 +23,22 @@ var USER_NAME = "";
 // Flag for browser-server connection control
 var CONNECTION_ERR_FLAG = false;
 // Message for server disconnection
-const BROWSER_WORD = ('<b style="color:red">' + 'BROWSER' + '</b>');
+const BROWSER_WORD = ('<b style="color:red">' + "BROWSER" + "</b>");
 // Connection to start html page server source
 const SERVER_URL = window.location.hostname;
 
 /**
  * Creates socket connection between browser and server
  */
-var socket;
+var socket = io.connect (SERVER_URL);
 
 while (!isCorrectInput (USER_NAME)) {
-	USER_NAME = prompt ("What's your name?");
+	USER_NAME = prompt ("What is your name?");
 	if (!isCorrectInput (USER_NAME)) {
 		if (!confirm ("Do you want to enter again?")) {
+			socket.disconnect();
 			break;
 		}
-	} else {
-		socket = io.connect (SERVER_URL);
 	}
 }
 
@@ -49,24 +48,24 @@ while (!isCorrectInput (USER_NAME)) {
 /**
  * Fired on initial connection with server
  */
-socket.on ('connect', function () {
+socket.on ("connect", function () {
 	CONNECTION_ERR_FLAG = false;
 
 	// Asks server to connect new user to chat
-	socket.emit ('addNewUserToChat', USER_NAME);
+	socket.emit ("addNewUserToChat", USER_NAME);
 });
 
 /**
  * Fired to add new message in chat box
  */
-socket.on ('updateChat', function (msgObj) {
+socket.on ("updateChat", function (msgObj) {
 	logToChatBox (msgObj);
 });
 
 /**
  * Fired to initiate CHAT_BOX field by new room messages due to connection
  */
-socket.on ('msgArr', function (msgArr) {
+socket.on ("msgArr", function (msgArr) {
 	cleanParent (CHAT_BOX);
 	// Adds old messages to chatBox
 	if (msgArr.length) {
@@ -80,7 +79,7 @@ socket.on ('msgArr', function (msgArr) {
 /**
  * Fired to update rooms list for current user page
  */
-socket.on ('updateRooms', function (roomsArr, newRoomForUser) {
+socket.on ("updateRooms", function (roomsArr, newRoomForUser) {
 	// If some other users create new rooms, they appear in rooms list
 	if (newRoomForUser == "updateRoomsList") {
 		updateRoomsList (roomsArr, socket.curRoom);
@@ -95,7 +94,7 @@ socket.on ('updateRooms', function (roomsArr, newRoomForUser) {
 /**
  * Fired upon a disconnection with server
  */
-socket.on ('connect_error', function () {
+socket.on ("connect_error", function () {
 	if (!CONNECTION_ERR_FLAG) {
 		// Writes disconnection message in chatbox field
 		logToChatBox ({
@@ -114,7 +113,7 @@ socket.on ('connect_error', function () {
  */
 SEND_BUTTON.onclick = function () {
 	/** Parses text of input form */
-	socket.emit ('sendMessage', TEXT_INPUT.value);
+	socket.emit ("sendMessage", TEXT_INPUT.value);
 	TEXT_INPUT.value = "";
 };
 
@@ -123,29 +122,40 @@ SEND_BUTTON.onclick = function () {
  * - user has to click on CREATE_NEW_ROOM_HREF
  * - write name of new room in prompt field
  *
- * Then SERVER connects user with new room
+ * Then SERVER connects user to new room
  */
-CREATE_NEW_ROOM_HREF.addEventListener ('click', function () {
+CREATE_NEW_ROOM_HREF.addEventListener ("click", function () {
 	let roomName = "";
 	while (!isCorrectInput (roomName)) {
 		roomName = prompt ("Enter your room name: ");
 	}
-	socket.emit ('switchUserRoom', roomName);
+	socket.emit ("switchUserRoom", roomName);
 });
 
+/**********************************
+ * FUNCTIONS PART
+ *********************************/
 /**
  * Updates rooms list on the page
- * Markes current user room in the list
  * @param roomsArr {Strings array} Full list of chat rooms
  * @param userRoom {String} active room for this user
  */
 function updateRoomsList (roomsArr, userRoom) {
 	cleanParent (ROOMS_LIST);
-	/** Rewrite list due to new roomsArr data */
-	for (let item of roomsArr) {
+	reWriteRoomsList(roomsArr, userRoom);
+}
+
+/**
+ * Fills rooms list by new values from fooms array
+ * Markes current user room in the list
+ * @param roomsArr {Strings array} Full list of chat rooms
+ * @param userRoom {String} active room for this user
+ */
+function reWriteRoomsList (roomsArr, userRoom) {
+	roomsArr.forEach ((item) => {
+		let newLi = document.createElement ("li");
 		if (item == userRoom) {
 			/** Item for current room isn't active in rooms list */
-			let newLi = document.createElement ("li");
 			newLi.innerHTML = item;
 			ROOMS_LIST.appendChild (newLi);
 		} else {
@@ -159,17 +169,13 @@ function updateRoomsList (roomsArr, userRoom) {
 				socket.emit ("switchUserRoom", item);
 			});
 			/** Wrap href into rooms list by li parent */
-			let newLi = document.createElement ("li");
 			newLi.appendChild (href);
 			/** Add li into rooms list */
 			ROOMS_LIST.appendChild (newLi);
 		}
-	}
+	});
 }
 
-/**********************************
- * FUNCTIONS PART
- *********************************/
 /**
  * Checks if user entered valid name value
  * @param {String} value
@@ -183,21 +189,20 @@ function isCorrectInput (value) {
 	return true;
 }
 
-
 /**
  * Parses and types messages from server in chat box
  * @param msgObj {JSON Object} Message to type in chat field
  */
 function logToChatBox (msgObj) {
-	var message = document.createElement ('p');
+	let message = document.createElement ("p");
 
 	/** Parses time value from param object and create message string */
 	if (msgObj.time !== undefined) {
-		var t = new Date (Date.parse (msgObj.time));
-		var time = format24 (t);
-		message.innerHTML = ('<b>' + time + " - " + msgObj.user + " : " + '</b> ' + msgObj.message + "<br>");
+		let time = new Date (Date.parse (msgObj.time));
+		time = format24 (time);
+		message.innerHTML = ("<b>" + time + " - " + msgObj.user + " : " + "</b> " + msgObj.message + "<br>");
 	} else {
-		message.innerHTML = ('<b>' + msgObj.user + " : " + '</b> ' + msgObj.message + "<br>");
+		message.innerHTML = ("<b>" + msgObj.user + " : " + "</b> " + msgObj.message + "<br>");
 	}
 
 	CHAT_BOX.appendChild (message);
@@ -220,9 +225,9 @@ function rewriteWrapGreeting (userName, newRoomForUser) {
  */
 function cleanParent (listArr) {
 	if (listArr.children.length) {
-		for (var i = (listArr.children.length - 1); i >= 0; i--) {
+		for (let i = (listArr.children.length - 1); i >= 0; i--) {
 			let child = listArr.children[i];
-			listArr.removeChild (child);//!!! тестировать с istArr.pop
+			listArr.removeChild (child);
 		}
 	}
 }
@@ -230,14 +235,13 @@ function cleanParent (listArr) {
 /**
  * Parses time from date param in 24-hours format
  * @param date {Date}
- * @return strTime {String} "01.12 24:00"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * @return strTime {String} "01.12 24:00"
  */
 function format24 (date) {
-	var hours = date.getHours ();
-	var minutes = date.getMinutes ();
-	minutes = minutes < 10 ? '0' + minutes : minutes;
-	var day = date.getDate ();
-	//var month = date.toLocaleString('ru', {month: 'long'});
-	var month = (date.getMonth () < 10) ? ("0" + (date.getMonth () + 1)) : (date.getMonth () + 1);
+	let hours = date.getHours ();
+	let minutes = date.getMinutes ();
+	minutes = minutes < 10 ? "0" + minutes : minutes;
+	let day = date.getDate ();
+	let month = (date.getMonth () < 10) ? ("0" + (date.getMonth () + 1)) : (date.getMonth () + 1);
 	return (day + "." + month + " " + hours + ":" + minutes);
 }

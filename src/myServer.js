@@ -1,26 +1,26 @@
-"use strict";
 // Establish a connection to the user browser
-var SOCKET_IO = require ('socket.io');
+import SOCKET_IO from 'socket.io';
 // Establish a connection to the mongo database
-var MONGO_CLIENT = require ('mongodb').MongoClient;
+import MONGO from "mongodb";
+const MONGO_CLIENT = MONGO.MongoClient;
 // Global variable for socket.io server
 var IO;
 
 const hostURI = "mongodb://heroku_x87klbmn:lt49ivc2vktgbg1dlrtv3ncrhc@ds011271.mlab.com:11271/heroku_x87klbmn";
-const localURI = 'mongodb://localhost:27017/chat';
-exports.dbURI = hostURI;
+const localURI = "mongodb://localhost:27017/chat";
+const dbURI = localURI;
 
-exports.initServer = function (listener, callbackAfterServerRunning) {
-	MONGO_CLIENT.connect (hostURI, function (err, db) {
+const initServer = function (listener, callbackAfterServerRunning) {
+	MONGO_CLIENT.connect (dbURI, function (err, db) {
 		console.log ("SERVER: connected to dataBase " + db.databaseName);
 
 		IO = SOCKET_IO.listen (listener);
 
 		/** Variables to control rooms and users for current server */
-		IO.roomsList = ['MAIN'];
-		IO.сlientsInRoomQty = {'MAIN': 0};
+		IO.roomsList = ["MAIN"];
+		IO.сlientsInRoomQty = {"MAIN": 0};
 
-		IO.on ('connection', function (socket) {
+		IO.on ("connection", function (socket) {
 			chatHandler (socket, db);
 		});
 
@@ -31,21 +31,23 @@ exports.initServer = function (listener, callbackAfterServerRunning) {
 	});
 };
 
+export {dbURI, initServer};
+
 /**
  * Main handler for chat events
  * @param socket
  * @param db
  */
 function chatHandler (socket, db) {
-	socket.on ('addNewUserToChat', function (username) {
+	socket.on ("addNewUserToChat", function (username) {
 		/** Store the username in the socket session for this client */
 		socket.username = username;
 		addNewUserToChat (socket);
 		sendOldMsgsFromRoom (socket, db);
 	});
 
-	socket.on ('sendMessage', function (msg) {
-		var newChat_msg = {
+	socket.on ("sendMessage", function (msg) {
+		let newChat_msg = {
 			room: socket.curRoom,
 			time: new Date (),
 			user: socket.username,
@@ -53,14 +55,14 @@ function chatHandler (socket, db) {
 		};
 
 		/** Emits message to other users in current socket room */
-		IO.sockets.in (socket.curRoom).emit ('updateChat', newChat_msg);
+		IO.sockets.in (socket.curRoom).emit ("updateChat", newChat_msg);
 
 		/** Stores message in db */
-		let collection = db.collection ('messages');
+		let collection = db.collection ("messages");
 		collection.insertOne (newChat_msg);
 	});
 
-	socket.on ('switchUserRoom', function (nextRoom) {
+	socket.on ("switchUserRoom", function (nextRoom) {
 		if (isArrayContain (IO.roomsList, nextRoom)) {
 			/** User goes to existed room */
 			switchToRoom (socket, nextRoom, db);
@@ -71,17 +73,17 @@ function chatHandler (socket, db) {
 		}
 	});
 
-	socket.on ('disconnect', function () {
+	socket.on ("disconnect", function () {
 		removeUserFromBases (socket, socket.curRoom, db);
 
 		/** Notify users in MAIN room, that this user has disconnected */
-		var userLeaveChat_msg = {
-			room: 'MAIN',
+		let userLeaveChat_msg = {
+			room: "MAIN",
 			time: new Date (),
 			user: "SERVER",
-			message: (socket.username + ' HAS LEAVE THIS CHAT')
+			message: (socket.username + " HAS LEAVE THIS CHAT")
 		};
-		IO.emit ('updateChat', userLeaveChat_msg);
+		IO.emit ("updateChat", userLeaveChat_msg);
 	});
 }
 
@@ -95,25 +97,25 @@ function addNewUserToChat (socket) {
 	IO.сlientsInRoomQty["MAIN"]++;
 
 	/** Echo to user, that he is connected to Chat */
-	var userJoinToChat_msg = {
+	let userJoinToChat_msg = {
 		room: "MAIN",
 		time: new Date (),
 		user: "SERVER",
-		message: (socket.username + ', YOU HAVE CONNECTED TO CHAT')
+		message: (socket.username + ", YOU HAVE CONNECTED TO CHAT")
 	};
-	socket.emit ('updateChat', userJoinToChat_msg);
+	socket.emit ("updateChat", userJoinToChat_msg);
 
 	/** Send rooms list to this user */
-	socket.emit ('updateRooms', IO.roomsList, socket.curRoom);
+	socket.emit ("updateRooms", IO.roomsList, socket.curRoom);
 
 	/** Notify users in CHAT, that new user has connected */
-	var newUserJoinToOurChat_msg = {
+	let newUserJoinToOurChat_msg = {
 		room: "MAIN",
 		time: new Date (),
 		user: "SERVER",
-		message: (socket.username + ' HAS CONNECTED TO OUR CHAT')
+		message: (socket.username + " HAS CONNECTED TO OUR CHAT")
 	};
-	IO.emit ('updateChat', newUserJoinToOurChat_msg);
+	IO.emit ("updateChat", newUserJoinToOurChat_msg);
 
 }
 
@@ -138,7 +140,7 @@ function sendOldMsgsFromRoom (socket, db) {
  */
 function getOldMsgsFromRoom (socket, db) {
 	return new Promise ((resolve, reject) => {
-		let collection = db.collection ('messages');
+		let collection = db.collection ("messages");
 		collection.find ({room: socket.curRoom}).limit (50).sort ({"time": -1}).toArray (function (err, arr) {
 			resolve (arr);
 			reject (err);
@@ -153,17 +155,17 @@ function getOldMsgsFromRoom (socket, db) {
  */
 function sendMsgsToUser (socket, msgsArr) {
 	/** Sends messages history array to user */
-	socket.emit ('msgArr', msgsArr);
+	socket.emit ("msgArr", msgsArr);
 
 	/** Sends initial welcoming message to user */
 	let toNewUserInRoom_msg = {
 		room: socket.curRoom,
 		time: new Date (),
 		user: "SERVER",
-		message: (socket.username + ', YOU HAS CONNECTED TO ' + socket.curRoom)
+		message: (socket.username + ", YOU HAS CONNECTED TO " + socket.curRoom)
 	};
 
-	socket.emit ('updateChat', toNewUserInRoom_msg);
+	socket.emit ("updateChat", toNewUserInRoom_msg);
 }
 
 /**
@@ -188,15 +190,15 @@ function switchToRoom (socket, nextRoom, db) {
  * Excludes user from room
  */
 function excludeUserFromCurrRoom (socket, db) {
-	var userLeaveCurrRoom_msg = {
+	let userLeaveCurrRoom_msg = {
 		room: socket.curRoom,
 		time: new Date (),
 		user: "SERVER",
-		message: (socket.username + ' HAS LEAVE OUR ROOM')
+		message: (socket.username + " HAS LEAVE OUR ROOM")
 	};
 
 	/** Notify other users in this room about user leaving */
-	socket.broadcast.to (socket.curRoom).emit ('updateChat', userLeaveCurrRoom_msg);
+	socket.broadcast.to (socket.curRoom).emit ("updateChat", userLeaveCurrRoom_msg);
 
 	removeUserFromBases (socket, socket.curRoom, db);
 
@@ -224,14 +226,14 @@ function removeUserFromBases (socket, room, db) {
 function removeEmptyRoomFromBases (socket, room, db) {
 	/** Remove room data from IO stores */
 	delete IO.сlientsInRoomQty[room];
-	var indexToRemove = IO.roomsList.indexOf (room);
+	let indexToRemove = IO.roomsList.indexOf (room);
 	IO.roomsList.splice (indexToRemove, 1);
 
 	/** Sends new rooms list for all users */
-	socket.broadcast.emit ('updateRooms', IO.roomsList, "updateRoomsList");
+	socket.broadcast.emit ("updateRooms", IO.roomsList, "updateRoomsList");
 
 	/** Remove room data from DB */
-	var collection = db.collection ('messages');
+	let collection = db.collection ("messages");
 	collection.deleteMany ({room: room}, {}, function () {
 
 	});
@@ -246,18 +248,18 @@ function includeUserToNextRoom (socket, nextRoom, db) {
 	socket.join (nextRoom);
 	IO.сlientsInRoomQty[nextRoom] += 1;
 
-	var userJoinToRoom_msg = {
+	let userJoinToRoom_msg = {
 		room: nextRoom,
 		time: new Date (),
 		user: "SERVER",
-		message: (socket.username + ' HAS CONNECTED TO OUR ROOM')
+		message: (socket.username + " HAS CONNECTED TO OUR ROOM")
 	};
 
 	/** Notify other users in this room about new user joining */
-	socket.broadcast.to (socket.curRoom).emit ('updateChat', userJoinToRoom_msg);
+	socket.broadcast.to (socket.curRoom).emit ("updateChat", userJoinToRoom_msg);
 
 	/** Show this room as active into this user rooms list  */
-	socket.emit ('updateRooms', IO.roomsList, nextRoom);
+	socket.emit ("updateRooms", IO.roomsList, nextRoom);
 
 	sendOldMsgsFromRoom (socket, db);
 }
@@ -271,5 +273,5 @@ function createNewRoom (socket, newRoom) {
 	IO.сlientsInRoomQty[newRoom] = 0;
 
 	/** Sends new rooms list, with new room to all users  */
-	socket.broadcast.emit ('updateRooms', IO.roomsList, "updateRoomsList");
+	socket.broadcast.emit ("updateRooms", IO.roomsList, "updateRoomsList");
 }
