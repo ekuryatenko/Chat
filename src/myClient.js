@@ -1,5 +1,3 @@
-"use strict";
-
 /**********************************
  * ACTIVE USER PAGE FIELDS
  *********************************/
@@ -33,13 +31,13 @@ const SERVER_URL = window.location.hostname;
 var socket = io.connect (SERVER_URL);
 
 while (!isCorrectInput (USER_NAME)) {
-	USER_NAME = prompt ("What is your name?");
-	if (!isCorrectInput (USER_NAME)) {
-		if (!confirm ("Do you want to enter again?")) {
-			socket.disconnect();
-			break;
-		}
-	}
+  USER_NAME = prompt ("What is your name?");
+  if (!isCorrectInput (USER_NAME)) {
+    if (!confirm ("Do you want to enter again?")) {
+      socket.disconnect ();
+      break;
+    }
+  }
 }
 
 /**********************************
@@ -49,60 +47,60 @@ while (!isCorrectInput (USER_NAME)) {
  * Fired on initial connection with server
  */
 socket.on ("connect", function () {
-	CONNECTION_ERR_FLAG = false;
+  CONNECTION_ERR_FLAG = false;
 
-	// Asks server to connect new user to chat
-	socket.emit ("addNewUserToChat", USER_NAME);
+  // Asks server to connect new user to chat
+  socket.emit ("addNewUserToChat", USER_NAME);
 });
 
 /**
  * Fired to add new message in chat box
  */
 socket.on ("updateChat", function (msgObj) {
-	logToChatBox (msgObj);
+  logToChatBox (msgObj);
 });
 
 /**
  * Fired to initiate CHAT_BOX field by new room messages due to connection
  */
 socket.on ("msgArr", function (msgArr) {
-	cleanParent (CHAT_BOX);
-	// Adds old messages to chatBox
-	if (msgArr.length) {
-		msgArr.reverse ();
-		msgArr.map ((item) => {
-			logToChatBox (item);
-		});
-	}
+  cleanParent (CHAT_BOX);
+  // Adds old messages to chatBox
+  if (msgArr.length) {
+    msgArr.reverse ();
+    msgArr.map ((item) => {
+      logToChatBox (item);
+    });
+  }
 });
 
 /**
  * Fired to update rooms list for current user page
  */
 socket.on ("updateRooms", function (roomsArr, newRoomForUser) {
-	// If some other users create new rooms, they appear in rooms list
-	if (newRoomForUser == "updateRoomsList") {
-		updateRoomsList (roomsArr, socket.curRoom);
-	} else {
-		//If user has created his room, it's appear in rooms list
-		socket.curRoom = newRoomForUser;
-		updateRoomsList (roomsArr, newRoomForUser);
-		rewriteWrapGreeting (USER_NAME, newRoomForUser);
-	}
+  // If some other users create new rooms, they appear in rooms list
+  if (newRoomForUser == "updateRoomsList") {
+    updateRoomsList (roomsArr, socket.curRoom);
+  } else {
+    //If user has created his room, it's appear in rooms list
+    socket.curRoom = newRoomForUser;
+    updateRoomsList (roomsArr, newRoomForUser);
+    rewriteWrapGreeting (USER_NAME, newRoomForUser);
+  }
 });
 
 /**
  * Fired upon a disconnection with server
  */
 socket.on ("connect_error", function () {
-	if (!CONNECTION_ERR_FLAG) {
-		// Writes disconnection message in chatbox field
-		logToChatBox ({
-			user: BROWSER_WORD,
-			message: "Connect error"
-		});
-	}
-	CONNECTION_ERR_FLAG = true;
+  if (!CONNECTION_ERR_FLAG) {
+    // Writes disconnection message in chatbox field
+    logToChatBox ({
+      user: BROWSER_WORD,
+      message: "Connect error"
+    });
+  }
+  CONNECTION_ERR_FLAG = true;
 });
 
 /**********************************
@@ -112,9 +110,9 @@ socket.on ("connect_error", function () {
  * Initiates user message sending on SEND_BUTTON click
  */
 SEND_BUTTON.onclick = function () {
-	/** Parses text of input form */
-	socket.emit ("sendMessage", TEXT_INPUT.value);
-	TEXT_INPUT.value = "";
+  /** Parses text of input form */
+  socket.emit ("sendMessage", TEXT_INPUT.value);
+  TEXT_INPUT.value = "";
 };
 
 /**
@@ -125,11 +123,11 @@ SEND_BUTTON.onclick = function () {
  * Then SERVER connects user to new room
  */
 CREATE_NEW_ROOM_HREF.addEventListener ("click", function () {
-	let roomName = "";
-	while (!isCorrectInput (roomName)) {
-		roomName = prompt ("Enter your room name: ");
-	}
-	socket.emit ("switchUserRoom", roomName);
+  let roomName = "";
+  while (!isCorrectInput (roomName)) {
+    roomName = prompt ("Enter your room name: ");
+  }
+  socket.emit ("switchUserRoom", roomName);
 });
 
 /**********************************
@@ -141,8 +139,8 @@ CREATE_NEW_ROOM_HREF.addEventListener ("click", function () {
  * @param userRoom {String} active room for this user
  */
 function updateRoomsList (roomsArr, userRoom) {
-	cleanParent (ROOMS_LIST);
-	reWriteRoomsList(roomsArr, userRoom);
+  cleanParent (ROOMS_LIST);
+  reWriteRoomsList (roomsArr, userRoom);
 }
 
 /**
@@ -152,28 +150,28 @@ function updateRoomsList (roomsArr, userRoom) {
  * @param userRoom {String} active room for this user
  */
 function reWriteRoomsList (roomsArr, userRoom) {
-	roomsArr.forEach ((item) => {
-		let newLi = document.createElement ("li");
-		if (item == userRoom) {
-			/** Item for current room isn't active in rooms list */
-			newLi.innerHTML = item;
-			ROOMS_LIST.appendChild (newLi);
-		} else {
-			/** Other rooms items will be active href - click on href switch user to href room */
-			let href = document.createElement ("a");
-			/** Href dosen't make HTTP calls, it has default value "#" */
-			href.href = "#";
-			href.innerHTML = item;
-			/** Href click calls socket event to switch room from server side */
-			href.addEventListener ("click", function () {
-				socket.emit ("switchUserRoom", item);
-			});
-			/** Wrap href into rooms list by li parent */
-			newLi.appendChild (href);
-			/** Add li into rooms list */
-			ROOMS_LIST.appendChild (newLi);
-		}
-	});
+  roomsArr.forEach ((item) => {
+    let newLi = document.createElement ("li");
+    if (item == userRoom) {
+      /** Item for current room isn't active in rooms list */
+      newLi.innerHTML = item;
+      ROOMS_LIST.appendChild (newLi);
+    } else {
+      /** Other rooms items will be active href - click on href switch user to href room */
+      let href = document.createElement ("a");
+      /** Href dosen't make HTTP calls, it has default value "#" */
+      href.href = "#";
+      href.innerHTML = item;
+      /** Href click calls socket event to switch room from server side */
+      href.addEventListener ("click", function () {
+        socket.emit ("switchUserRoom", item);
+      });
+      /** Wrap href into rooms list by li parent */
+      newLi.appendChild (href);
+      /** Add li into rooms list */
+      ROOMS_LIST.appendChild (newLi);
+    }
+  });
 }
 
 /**
@@ -181,12 +179,12 @@ function reWriteRoomsList (roomsArr, userRoom) {
  * @param {String} value
  */
 function isCorrectInput (value) {
-	if (value == null) {
-		return false;
-	} else if (value == "") {
-		return false;
-	}
-	return true;
+  if (value == null) {
+    return false;
+  } else if (value == "") {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -194,20 +192,20 @@ function isCorrectInput (value) {
  * @param msgObj {JSON Object} Message to type in chat field
  */
 function logToChatBox (msgObj) {
-	let message = document.createElement ("p");
+  let message = document.createElement ("p");
 
-	/** Parses time value from param object and create message string */
-	if (msgObj.time !== undefined) {
-		let time = new Date (Date.parse (msgObj.time));
-		time = format24 (time);
-		message.innerHTML = ("<b>" + time + " - " + msgObj.user + " : " + "</b> " + msgObj.message + "<br>");
-	} else {
-		message.innerHTML = ("<b>" + msgObj.user + " : " + "</b> " + msgObj.message + "<br>");
-	}
+  /** Parses time value from param object and create message string */
+  if (msgObj.time !== undefined) {
+    let time = new Date (Date.parse (msgObj.time));
+    time = format24 (time);
+    message.innerHTML = ("<b>" + time + " - " + msgObj.user + " : " + "</b> " + msgObj.message + "<br>");
+  } else {
+    message.innerHTML = ("<b>" + msgObj.user + " : " + "</b> " + msgObj.message + "<br>");
+  }
 
-	CHAT_BOX.appendChild (message);
-	/** Sets message to bottom of the external scroll */
-	message.scrollIntoView (false);
+  CHAT_BOX.appendChild (message);
+  /** Sets message to bottom of the external scroll */
+  message.scrollIntoView (false);
 }
 
 /**
@@ -216,7 +214,7 @@ function logToChatBox (msgObj) {
  * @param newRoomForUser {String}
  */
 function rewriteWrapGreeting (userName, newRoomForUser) {
-	WRAP_USER_NAME.innerHTML = (" " + userName + ". You are in " + newRoomForUser + " room.");
+  WRAP_USER_NAME.innerHTML = (" " + userName + ". You are in " + newRoomForUser + " room.");
 }
 
 /**
@@ -224,12 +222,12 @@ function rewriteWrapGreeting (userName, newRoomForUser) {
  * @param listArr {DOM page object} Should contain some children
  */
 function cleanParent (listArr) {
-	if (listArr.children.length) {
-		for (let i = (listArr.children.length - 1); i >= 0; i--) {
-			let child = listArr.children[i];
-			listArr.removeChild (child);
-		}
-	}
+  if (listArr.children.length) {
+    for (let i = (listArr.children.length - 1); i >= 0; i--) {
+      let child = listArr.children[i];
+      listArr.removeChild (child);
+    }
+  }
 }
 
 /**
@@ -238,10 +236,10 @@ function cleanParent (listArr) {
  * @return strTime {String} "01.12 24:00"
  */
 function format24 (date) {
-	let hours = date.getHours ();
-	let minutes = date.getMinutes ();
-	minutes = minutes < 10 ? "0" + minutes : minutes;
-	let day = date.getDate ();
-	let month = (date.getMonth () < 10) ? ("0" + (date.getMonth () + 1)) : (date.getMonth () + 1);
-	return (day + "." + month + " " + hours + ":" + minutes);
+  let hours = date.getHours ();
+  let minutes = date.getMinutes ();
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  let day = date.getDate ();
+  let month = (date.getMonth () < 10) ? ("0" + (date.getMonth () + 1)) : (date.getMonth () + 1);
+  return (day + "." + month + " " + hours + ":" + minutes);
 }
