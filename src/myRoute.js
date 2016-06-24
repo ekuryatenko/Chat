@@ -6,12 +6,13 @@ import {DB_URI as uri} from "./myServer";
  * @param reply Server reply with JSON of room messages history
  * @param roomToFind {String} room name
  */
-var answer = function (reply, roomToFind) {
+let answer = function (reply, roomToFind) {
   mongoClient.connect (uri, function (err, db) {
+    let collection;
+
     console.log ("SERVER: myRoute has connected to dataBase");
 
-    let collection = db.collection ("messages");
-
+    collection = db.collection ("messages");
     collection.find ({room: roomToFind}, {_id: 0}).limit (50).sort ({"time": -1}).toArray (function (err, roomMsgs) {
       if (err) throw err;
 
@@ -24,10 +25,10 @@ var answer = function (reply, roomToFind) {
 
 /** Main routes for app server */
 const serverRoutes = [
-  {method: "GET", path: "/", handler: {file: "./views/webPage.html"}},//html
+  {method: "GET", path: "/", handler: {file: __dirname + "/views/webPage.html"}},//html
   {method: "GET", path: "/jade", handler: {view: "web.jade"}},//jade
-  {method: "GET", path: "/myClient.js", handler: {file: "./myClient.js"}},
-  {method: "GET", path: "/myStyle.css", handler: {file: "./views/myStyle.css"}},
+  {method: "GET", path: "/myClient.js", handler: {file: __dirname + "/myClient.js"}},
+  {method: "GET", path: "/myStyle.css", handler: {file: __dirname + "/views/myStyle.css"}},
   {
     method: "GET", path: "/messages/roomId={roomName}", handler: function (request, reply) {
     answer (reply, request.params.roomName);
