@@ -95,11 +95,16 @@ socket.on ("connect_error", function () {
 });
 
 /** Initiates user message sending on SEND_BUTTON click */
-SEND_BUTTON.onclick = function () {
-  /** Parses text from input form */
-  socket.emit ("sendMessage", TEXT_INPUT.value);
-  TEXT_INPUT.value = "";
-};
+SEND_BUTTON.addEventListener ("click", function () {
+  submitText ();
+});
+
+/** Initiates user message sending on Enter key due to input focus */
+TEXT_INPUT.addEventListener ('keypress', function (event) {
+  if (event.keyCode == 13) {
+    submitText ();
+  }
+});
 
 /**
  * Initiates creation of new room in chat:
@@ -233,4 +238,13 @@ function format24 (date) {
     month = ( date.getMonth () < 10 ) ? ( "0" + ( date.getMonth () + 1 ) ) : ( date.getMonth () + 1 );
 
   return (day + "." + month + " " + hours + ":" + minutes);
+}
+
+/**
+ * Sends form input text to server
+ */
+function submitText () {
+  /** Parses text from input form */
+  socket.emit ("sendMessage", TEXT_INPUT.value);
+  TEXT_INPUT.value = "";
 }
