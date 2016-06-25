@@ -2,19 +2,11 @@ import * as Path from "path";
 import * as Hapi from "hapi";
 import * as Inert from "inert";
 import * as Vision from "vision";
-//import * as Jade from "Jade";
+import * as Pug from "pug";
 import {serverRoutes as serverRoutes} from "./myRoute";
 import {initServer as initServer} from "./myServer";
 
-const server = new Hapi.Server ({
-  connections: {
-    routes: {
-      files: {
-        relativeTo: Path.join (__dirname, 'lib')
-      }
-    }
-  }
-});
+const server = new Hapi.Server ();
 
 server.connection ({port: process.env.PORT || 3000});
 
@@ -25,27 +17,26 @@ server.register (Inert, (err) => {
   }
 });
 
-/** Add templates rendering support by vision plugin */
+/** Adds templates rendering support by vision plugin */
 server.register (Vision, (err) => {
   if (err) {
     throw err;
   }
-});
 
-/*  /!** Enables Jade*!/
-//  server.views ({
-    /!** Registers the Jade as responsible for rendering of .jade files *!/
-//    engines: {
-//      jade: Jade
-//    },
-    /!** Shows server where templates are located in *!/
-//    path: __dirname + "/views",
-    /!** For correct page rendering: https://github.com/hapijs/vision#jade *!/
-//    compileOptions: {
-//      pretty: true
-//    }
-//  });
-//});*/
+  /** Enables Pug */
+  server.views ({
+    /** Registers the Pug as responsible for rendering of .pug files */
+    engines: {
+      pug: Pug
+    },
+    /** Shows server where templates are located in */
+    path: __dirname + "/views",
+    /** For correct page rendering: https://github.com/hapijs/vision#jade */
+    compileOptions: {
+      pretty: true
+    }
+  });
+});
 
 server.route (serverRoutes);
 
@@ -60,4 +51,4 @@ server.start ((err) => {
   });
 });
 
-export {server as server}
+export {server}

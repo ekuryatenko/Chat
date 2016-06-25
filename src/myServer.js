@@ -188,7 +188,7 @@ function sendMsgsToUser (socket, msgsArr) {
 }
 
 /**
- * Cheks if item exist in such array
+ * Checks if item exist in such array
  * @param arr Array for searching
  * @param item Object to search
  */

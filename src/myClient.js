@@ -30,7 +30,7 @@ const BROWSER_WORD = ('<b style="color:red">' + "BROWSER" + "</b>"),
  *********************************/
 /** Creates socket connection between browser and server  */
 var socket = io.connect (SERVER_URL);
-/** Waits for valid user name  */
+/** Blocks page to wait for valid user name  */
 while (!isCorrectInput (USER_NAME)) {
   USER_NAME = prompt ("What is your name?");
   if (!isCorrectInput (USER_NAME)) {
@@ -111,8 +111,14 @@ CREATE_NEW_ROOM_HREF.addEventListener ("click", function () {
   let roomName = "";
   while (!isCorrectInput (roomName)) {
     roomName = prompt ("Enter your room name: ");
+    if (!isCorrectInput (roomName)) {
+      if (!confirm ("Do you want to enter again?")) {
+        return 0;
+      }
+    } else {
+      socket.emit ("switchUserRoom", roomName);
+    }
   }
-  socket.emit ("switchUserRoom", roomName);
 });
 
 /**********************************
@@ -222,7 +228,7 @@ function cleanParent (listArr) {
  */
 function format24 (date) {
   let hours = date.getHours (),
-    minutes = ( minutes < 10 ) ? ( "0" + date.getMinutes () ) : ( date.getMinutes () ),
+    minutes = ( date.getMinutes () < 10 ) ? ( "0" + date.getMinutes () ) : ( date.getMinutes () ),
     day = date.getDate (),
     month = ( date.getMonth () < 10 ) ? ( "0" + ( date.getMonth () + 1 ) ) : ( date.getMonth () + 1 );
 
