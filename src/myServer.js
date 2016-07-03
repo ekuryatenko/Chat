@@ -5,9 +5,7 @@ import {MongoClient as MONGO_CLIENT} from "mongodb";
 /** Global variable for socket.io server */
 var IO;
 /** DB constants */
-const DB_HOST_URI = "mongodb://heroku_x87klbmn:lt49ivc2vktgbg1dlrtv3ncrhc@ds011271.mlab.com:11271/heroku_x87klbmn",
-  DB_LOCAL_URI = "mongodb://localhost:27017/chat",
-  DB_URI = DB_HOST_URI;
+const DB_URI = process.env.MONGODB_URI;
 
 /**
  * Makes main intial server connections

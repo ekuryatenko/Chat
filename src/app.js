@@ -8,7 +8,7 @@ import {initServer as initServer} from "./myServer";
 
 const server = new Hapi.Server ();
 
-server.connection ({port: process.env.PORT || 3000});
+server.connection ({port: process.env.PORT});
 
 /** Static files support */
 server.register (Inert, (err) => {
