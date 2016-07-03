@@ -34,7 +34,8 @@ const serverRoutes = [
       method: "GET", path: "/messages/roomId={roomName}", handler: function (request, reply) {
         answer (reply, request.params.roomName);
     }
-  }
+  },
+  {method: "GET", path: "/socket.io-1.2.0.js", handler: {file: __dirname + "/socket.io-1.2.0.js"}}
 ];
 
 export {serverRoutes};
