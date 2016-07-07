@@ -8,30 +8,30 @@ import {initServer as initServer} from "./myServer";
 
 const server = new Hapi.Server ();
 
-server.connection ({port: process.env.PORT});
+server.connection({port: process.env.PORT});
 
-/** Static files support */
+// Static files support
 server.register (Inert, (err) => {
   if (err) {
     throw err;
   }
 });
 
-/** Adds templates rendering support by vision plugin */
+// Adds templates rendering support by vision plugin
 server.register (Vision, (err) => {
   if (err) {
     throw err;
   }
 
-  /** Enables Pug */
+  // Enables Pug
   server.views ({
-    /** Registers the Pug as responsible for rendering of .pug files */
+    // Registers the Pug as responsible for rendering of .pug files
     engines: {
       pug: Pug
     },
-    /** Shows server where templates are located in */
-    path: __dirname + "/views",
-    /** For correct page rendering: https://github.com/hapijs/vision#jade */
+    // Shows server where templates are located in
+    path:  __dirname + "/views",
+    // For correct page rendering: https://github.com/hapijs/vision#jade
     compileOptions: {
       pretty: true
     }
@@ -45,10 +45,8 @@ server.start ((err) => {
     throw err;
   }
 
-  initServer (server.listener, function () {
-    /** Callback after my server's running */
+  initServer (server.listener, () => {
+    // Callback after my server's running
     console.log ("SERVER: app running at ", server.info.uri);
   });
 });
-
-export {server}
