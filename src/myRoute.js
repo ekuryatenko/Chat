@@ -57,9 +57,9 @@ const serverRoutes = [
   },
   {
     method: "GET",
-    path: "/myClient.js",
+    path: "/boundle.js",
     handler: {
-      file: __dirname + "/myClient.js"
+      file: __dirname + "/boundle.js"
     }
   },
   {
