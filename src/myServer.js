@@ -1,5 +1,5 @@
 /** Establish a connection to the user browser */
-import * as SOCKET_IO from "socket.io";
+import SOCKET_IO from "socket.io";
 /** Establish a connection to the mongo database */
 import {MongoClient as MONGO_CLIENT} from "mongodb";
 /** Global variable for socket.io server */
@@ -27,10 +27,8 @@ const initServer = function (listener, callbackAfterServerRunning) {
 
     IO.on ("connection", function (socket) {
       socket.io = IO;
-      socket.сlientsInRoomQty = IO.сlientsInRoomQty;
-      socket.roomsList = IO.roomsList;
       socket.db = db;
-      chatHandler (socket);
+      chatHandler (socket, IO, db);
     });
 
     /** Wait for server to boot */
@@ -49,7 +47,7 @@ import {
   disconnect,
   addToChat,
   switchRoom,
-  sendMessage
+  sendMessage,
 } from "./myServerLib";
 
 /**

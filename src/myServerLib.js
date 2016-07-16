@@ -1,8 +1,7 @@
 const disconnect = function () {
+  //There i had transpilling mistake when send this to functions
   const socket = this;
   const io = socket.io;
-  io.сlientsInRoomQty = socket.сlientsInRoomQty;
-  io.roomsList = socket.roomsList;
   const db = socket.db;
 
   removeUserFromBases (socket, socket.curRoom, io, db);
@@ -20,8 +19,6 @@ const disconnect = function () {
 const addToChat = function (username) {
   const socket = this;
   const io = socket.io;
-  io.сlientsInRoomQty = socket.сlientsInRoomQty;
-  io.roomsList = socket.roomsList;
   const db = socket.db;
 
   /** Store the username in the socket session of this client */
@@ -33,8 +30,6 @@ const addToChat = function (username) {
 const switchRoom = function (nextRoom) {
   const socket = this;
   const io = socket.io;
-  io.сlientsInRoomQty = socket.сlientsInRoomQty;
-  io.roomsList = socket.roomsList;
   const db = socket.db;
 
   if (isArrayContain (io.roomsList, nextRoom)) {
@@ -50,8 +45,6 @@ const switchRoom = function (nextRoom) {
 const sendMessage = function (msg) {
   const socket = this;
   const io = socket.io;
-  io.сlientsInRoomQty = socket.сlientsInRoomQty;
-  io.roomsList = socket.roomsList;
   const db = socket.db;
 
   var newChat_msg = {
