@@ -10,6 +10,9 @@ import {
   socket
 } from "./myClient.js"
 
+/**
+ * Fired when user has connected to server.
+ */
 const onConnect = function () {
   CONNECTION_ERR_FLAG[0] = false;
 
@@ -17,10 +20,19 @@ const onConnect = function () {
   this.emit ("addNewUserToChat", USER_NAME);
 };
 
+/**
+ * Fired when server sends new chat message to log into
+ * user page.
+ * @param {JSON} msgObj - New chat message.
+ */
 const onUpdateChat = function (msgObj) {
   logToChatBox (msgObj);
 };
 
+/**
+ * Fired when server sends room messages history to user.
+ * @param {JSON[]} msgArr - List of messages.
+ */
 const onMsgArr = function (msgArr) {
   cleanParent (CHAT_BOX);
 
@@ -33,6 +45,11 @@ const onMsgArr = function (msgArr) {
   }
 };
 
+/**
+ * Fired when server asks to update rooms list on user page.
+ * @param {string[]} roomsArr - List of chat rooms.
+ * @param {string} newRoomForUser - User room isn't underlined.
+ */
 const onUpdateRooms = function (roomsArr, newRoomForUser) {
   // If some other users create new rooms, they appear in rooms list
   if (newRoomForUser === "updateRoomsList") {
@@ -45,6 +62,9 @@ const onUpdateRooms = function (roomsArr, newRoomForUser) {
   }
 };
 
+/**
+ * Fired upon a disconnection with server.
+ */
 const onConnectError = function () {
   if (!CONNECTION_ERR_FLAG[0]) {
     // Writes disconnection message in chatbox field
@@ -56,18 +76,31 @@ const onConnectError = function () {
   CONNECTION_ERR_FLAG[0] = true;
 };
 
-const onSendButton = function () {
+/**
+ * Initiates user message sending on SEND_BUTTON click.
+ */
+const onSendButton = () => {
   submitText ();
 };
 
 const ENTER_KEY = 13;
-const onTextInput = function (event) {
+/**
+ * Initiates user message sending on Enter key due to input focus.
+ * @param {Object} event - DOM event, click on key due to form focus.
+ */
+const onTextInput = (event) => {
   if (event.keyCode === ENTER_KEY) {
     submitText ();
   }
 };
 
-const onNewRoomHref = function () {
+/**
+ * Initiates creation of new room in chat:
+ * 1) user has to click on CREATE_NEW_ROOM_HREF;
+ * 2) user has to write name of new room in prompt field;
+ * 3) SERVER connects user to new room.
+ */
+const onNewRoomHref = () => {
   let roomName = "";
 
   while (!isCorrectInput (roomName)) {
@@ -101,8 +134,8 @@ export {
  *****************/
 
 /**
- * Removes all childrens from param page field (for CHAT_BOX, ROOMS_LIST)
- * @param listArr {DOM object} Should contain some children
+ * Removes all childrens from param page field (for CHAT_BOX, ROOMS_LIST).
+ * @param {Object} listArr - DOM object, it should contain some children.
  */
 function cleanParent (listArr) {
   if (listArr.children.length) {
@@ -114,10 +147,10 @@ function cleanParent (listArr) {
 }
 
 /**
- * Fills rooms list by new values from rooms array
- * Marks current user room in the list
- * @param roomsArr {[string]} Full list of chat rooms
- * @param userRoom {string} active room for this user
+ * Fills rooms list by new values from rooms array.
+ * Marks current user room in the list.
+ * @param {string[]} roomsArr - Full list of chat rooms.
+ * @param {string} userRoom - active room for this user.
  */
 function reWriteRoomsList (roomsArr, userRoom) {
   roomsArr.forEach ((item) => {
@@ -150,9 +183,9 @@ function reWriteRoomsList (roomsArr, userRoom) {
 }
 
 /**
- * Updates rooms list on the page due to new rooms list
- * @param roomsArr {[string]} New full list of chat rooms
- * @param userRoom {string} active room for this user
+ * Updates rooms list on the page due to new rooms list.
+ * @param {string[]} roomsArr - New full list of chat rooms.
+ * @param {string} userRoom - active room for this user.
  */
 function updateRoomsList (roomsArr, userRoom) {
   cleanParent (ROOMS_LIST);
@@ -161,7 +194,7 @@ function updateRoomsList (roomsArr, userRoom) {
 
 /**
  * Checks if user entered valid name value
- * @param {string} value
+ * @param {string} value - User name or room name.
  */
 function isCorrectInput (value) {
   if (value === null) {
@@ -174,8 +207,8 @@ function isCorrectInput (value) {
 }
 
 /**
- * Parses and types messages from server in chat box
- * @param msgObj {JSON Object} Message to type in chat field
+ * Parses and types messages from server in chat box.
+ * @param {Object} msgObj - Message to type in chat field.
  */
 function logToChatBox (msgObj) {
   const message = document.createElement ("p");
@@ -198,9 +231,9 @@ function logToChatBox (msgObj) {
 }
 
 /**
- * Types user greeting phrase on the page with name of current room for user
- * @param userName {String}
- * @param newRoomForUser {String}
+ * Types user greeting phrase on the page with name of current room for user.
+ * @param {string} userName
+ * @param {string} newRoomForUser
  */
 function reWriteWrapGreeting (userName, newRoomForUser) {
   WRAP_USER_NAME.innerHTML = ` ${userName}. You are in
@@ -209,9 +242,9 @@ function reWriteWrapGreeting (userName, newRoomForUser) {
 
 
 /**
- * Parses time from date param in 24-hours format
- * @param date {Date}
- * @return {String} "01.12 24:00"
+ * Parses time from date param in 24-hours format.
+ * @param {Date} date
+ * @return {string} - "01.12 24:00" format.
  */
 function format24 (date) {
   const hours = date.getHours ();
@@ -223,7 +256,7 @@ function format24 (date) {
 }
 
 /**
- * Sends form input text to server
+ * Sends form input text to server.
  */
 function submitText () {
   // Parses text from input form

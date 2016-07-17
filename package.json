@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "./lib/app.js",
   "scripts": {
-    "postinstall": "babel src --out-dir lib && webpack",
-    "compile": "babel src/client --out-dir lib"
+    "postinstall": "babel server --out-dir lib && webpack",
+    "compile": "babel server --out-dir lib && webpack"
   },
   "author": "",
   "license": "ISC",

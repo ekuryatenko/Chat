@@ -1,14 +1,15 @@
 // Establish a connection to the mongo database
 import {MongoClient as mongoClient} from "mongodb";
+
 import {DB_URI as uri} from "./myServer";
 
 // Limit for messages history size due to history call
 const MSGS_QTY = 50;
 
 /**
- * Makes single request to db to get room history
- * @param reply {Object} Server reply with JSON of room messages history
- * @param roomToFind {string} room name
+ * Makes single request to db to get room history.
+ * @param {Object} reply - Server reply with JSON of room messages history.
+ * @param {string} roomToFind - room name.
  */
 const answer = (reply, roomToFind) => {
   mongoClient.connect (uri, (err, db) => {

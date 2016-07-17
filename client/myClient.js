@@ -30,7 +30,7 @@ export let USER_NAME = "";
 export let CONNECTION_ERR_FLAG = [false];
 
 // Message for server disconnection
-export const BROWSER_WORD = "<b style=\"color:red\">BROWSER</b>";
+export const BROWSER_WORD = `<b style="color:red">BROWSER</b>`;
 
 // Connection to start html page server source
 export const SERVER_URL = window.location.hostname;
@@ -83,19 +83,16 @@ SEND_BUTTON.addEventListener ("click", onSendButton);
 // Initiates user message sending on Enter key due to input focus
 TEXT_INPUT.addEventListener ("keypress", onTextInput);
 
-/**
- * Initiates creation of new room in chat:
- * 1) user has to click on CREATE_NEW_ROOM_HREF
- * 2) user has to write name of new room in prompt field
- * 3) SERVER connects user to new room
- */
+// Initiates creation of new room in chat.
 CREATE_NEW_ROOM_HREF.addEventListener ("click", onNewRoomHref);
 
 /************
  * FUNCTIONS
  ************/
 
-// Ask user to input his name in chat
+/**
+ * Asks user to input his name in chat
+ */
 function loginUser () {
   let socket;
 
